@@ -1,0 +1,102 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+// Function to display the to-do list
+void displayToDoList(const vector<string> &tasks) {
+    cout << "To-Do List:" << endl;
+    for (int i = 0; i < tasks.size(); i++) {
+        cout << i + 1 << ". " << tasks[i] << endl;
+    }
+    cout << endl;
+}
+
+// Function to add a task to the list
+void addTask(vector<string> &tasks, const string &task) {
+    tasks.push_back(task);
+    cout << "Task added: " << task << endl;
+}
+
+// Function to remove a task from the list
+void removeTask(vector<string> &tasks, int taskIndex) {
+    if (taskIndex >= 0 && taskIndex < tasks.size()) {
+        cout << "Task removed: " << tasks[taskIndex] << endl;
+        tasks.erase(tasks.begin() + taskIndex);
+    } else {
+        cout << "Invalid task index." << endl;
+    }
+}
+
+// Function to save the to-do list to a file
+void saveToDoList(const vector<string> &tasks, const string &filename) {
+    ofstream file(filename);
+    if (file.is_open()) {
+        for (const string &task : tasks) {
+            file << task << endl;
+        }
+        file.close();
+        cout << "To-Do List saved to " << filename << endl;
+    } else {
+        cout << "Error: Unable to save the To-Do List." << endl;
+    }
+}
+
+int main() {
+    vector<string> tasks;
+    string filename = "todolist.txt";
+
+    ifstream file(filename);
+    string task;
+
+    if (file.is_open()) {
+        while (getline(file, task)) {
+            tasks.push_back(task);
+        }
+        file.close();
+    }
+
+    int choice;
+    do {
+        cout << "Menu:" << endl;
+        cout << "1. Display To-Do List" << endl;
+        cout << "2. Add Task" << endl;
+        cout << "3. Remove Task" << endl;
+        cout << "4. Save To-Do List" << endl;
+        cout << "5. Quit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                displayToDoList(tasks);
+                break;
+            case 2:
+                cout << "Enter the task: ";
+                cin.ignore(); // Consume the newline character left by previous cin
+                getline(cin, task);
+                addTask(tasks, task);
+                break;
+            case 3:
+                displayToDoList(tasks);
+                cout << "Enter the task index to remove: ";
+                int taskIndex;
+                cin >> taskIndex;
+                removeTask(tasks, taskIndex - 1);
+                break;
+            case 4:
+                saveToDoList(tasks, filename);
+                break;
+            case 5:
+                cout << "Goodbye!" << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+                break;
+        }
+    } while (choice != 5);
+
+    return 0;
+}
